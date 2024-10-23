@@ -22,7 +22,8 @@ To read more about using these font, please visit the Next.js documentation:
 import { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { AttachmentIcon, CloseIcon, MenuIcon } from './Icons';
 
 interface Message {
@@ -166,6 +167,21 @@ export function Chat() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+
+  const formatContent = (content: any): string => {
+    // convert content to string
+    let str = typeof content === 'string' ? content : String(content);
+    
+    // remove double quotes at the beginning and end
+    str = str.replace(/^"|"$/g, '');
+    
+    // add two spaces at the end of \n and \]n\n
+    str = str.replace(/\\n/g, '  \n  ').replace(/\\]n\\n/g, '  \]n\n  ');
+    
+    return str;
+  };
+
+
   return (
     <div className="flex min-h-screen w-full bg-gray-100">
       {/* Top bar for mobile devices */}
@@ -196,21 +212,16 @@ export function Chat() {
         <div className="w-full max-w-[800px] flex flex-col bg-white border border-gray-400 rounded-lg overflow-hidden">
           <div className="flex-1 overflow-auto p-4 space-y-4">
             {messages.map((msg, index) => (
-              <ChatMessage
-                key={index}
-                isAI={msg.role === 'assistant'}
-                avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
-                message={
-                  msg.role === 'assistant' ? (
-                    <ReactMarkdown className="prose w-full max-w-none">
-                      {msg.content}
-                    </ReactMarkdown>
-                  ) : (
-                    msg.content
-                  )
-                }
-                imageUrl={msg.imageUrl}
-              />
+              <div key={index}>
+                <ChatMessage
+                  isAI={msg.role === 'assistant'}
+                  avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
+                  message={
+                    <Markdown remarkPlugins={[remarkGfm]} className="line-break">{formatContent(msg.content)}</Markdown>
+                  }
+                  imageUrl={msg.imageUrl}
+                />
+              </div>
             ))}
             {isThinking && (
               <ChatMessage

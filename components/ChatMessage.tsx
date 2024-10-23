@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ReactNode } from 'react';
-
 interface ChatMessageProps {
   isAI: boolean;
   avatarFallback: string;
