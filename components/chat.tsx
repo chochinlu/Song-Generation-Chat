@@ -96,12 +96,14 @@ export function Chat() {
     console.log('Sending message with imageUrl:', imageUrl ? imageUrl.substring(0, 50) + '...' : 'undefined');
 
     try {
-      const response = await fetch('/api/chat', {
+      const formData = new FormData();
+      formData.append('user_id', 'test');
+      formData.append('session_id', 'test');
+      formData.append('chat_data', JSON.stringify({ messages: [...messages, newMessage], imageUrl }));
+
+      const response = await fetch('http://localhost:8000/api/v1/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ messages: [...messages, newMessage], imageUrl }),
+        body: formData,
       });
 
       if (!response.ok) {
