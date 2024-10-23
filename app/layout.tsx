@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Chat",
-  description: "Chat with AI",
+  title: "Suno Song Generator",
+  description: "Generate songs with AI",
 };
 
 const fontHeading = Inter({

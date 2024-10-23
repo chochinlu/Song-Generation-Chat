@@ -25,6 +25,7 @@ import { ChatInput } from './ChatInput';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { AttachmentIcon, CloseIcon, MenuIcon } from './Icons';
+import { Button } from "@/components/ui/button"
 
 interface Message {
   role: 'user' | 'assistant';
@@ -42,6 +43,7 @@ export function Chat() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [reminderMessage, setReminderMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 
@@ -182,6 +184,11 @@ export function Chat() {
   };
 
 
+  const handleButtonClick = (buttonText: string) => () => {
+    setInputMessage(buttonText);
+    inputRef.current?.focus();
+  };
+
   return (
     <div className="flex min-h-screen w-full bg-gray-100">
       {/* Top bar for mobile devices */}
@@ -195,16 +202,71 @@ export function Chat() {
       {isSidebarOpen && (
         <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-20" onClick={toggleSidebar}>
           <div className="w-64 h-full bg-white p-4 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <h1 className="text-2xl font-bold text-gray-500">Chat Wtih AI</h1>
+            <h1 className="text-xl font-bold text-gray-500">Suno Song Generator</h1>
             {/* Add more sidebar content here */}
           </div>
         </div>
       )}
 
       {/* Desktop sidebar */}
-      <div className="hidden md:block w-64 bg-white border-r border-gray-300 p-4 flex-shrink-0">
-        <h1 className="text-2xl font-bold text-gray-500">Chat With AI</h1>
-        {/* Add more sidebar content here */}
+      <div className="hidden md:block w-100 bg-white border-r border-gray-300 p-6 flex-shrink-0">
+        <h1 className="text-xl font-bold text-gray-500">Suno Song Generator</h1>
+        <p className="text-sm text-gray-500">Generate your favorite songs through chat.</p>
+
+
+        <div className="space-y-4 mt-4">
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={handleButtonClick("I want to generate lyrics about XX")}
+            >
+              I want to generate lyrics about XX
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={handleButtonClick("Generate corresponding song style list")}
+            >
+              Generate corresponding song style list
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={handleButtonClick("Based on the song and my ideas, give me a Suno Style List")}
+            >
+              Based on the song and my ideas, give me a Suno Style List
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={handleButtonClick("Generate a song lyrics")}
+            >
+              Generate a song lyrics
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={handleButtonClick("Generate song using Suno API based on these lyrics")}
+            >
+              Generate song using Suno API based on these lyrics
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={handleButtonClick("Current Suno Credit balance")}
+            >
+              Current Suno Credit balance
+            </Button>
+          </div>
+        </div>
+
+
+
       </div>
 
       {/* Main chat area */}
@@ -236,13 +298,14 @@ export function Chat() {
             <ChatInput
               inputMessage={inputMessage}
               setInputMessage={setInputMessage}
-              handleKeyDown={handleKeyDown}
-              imageUrl={imageUrl}
-              handleFileAttachment={handleFileAttachment}
               handleSendMessage={handleSendMessage}
               handleRemoveImage={handleRemoveImage}
               AttachmentIcon={AttachmentIcon}
               CloseIcon={CloseIcon}
+              handleKeyDown={handleKeyDown}
+              imageUrl={imageUrl}
+              handleFileAttachment={handleFileAttachment}
+              inputRef={inputRef}
             />
             <input
               type="file"

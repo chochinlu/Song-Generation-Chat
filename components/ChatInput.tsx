@@ -14,6 +14,7 @@ interface ChatInputProps {
   handleRemoveImage: () => void;
   AttachmentIcon: FC;
   CloseIcon: FC;
+  inputRef: React.RefObject<HTMLTextAreaElement>;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
@@ -25,7 +26,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   handleSendMessage,
   handleRemoveImage,
   AttachmentIcon,
-  CloseIcon
+  CloseIcon,
+  inputRef
 }) => (
   <div className="relative">
     {imageUrl && (
@@ -40,6 +42,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       </div>
     )}
     <Textarea
+      ref={inputRef}
       value={inputMessage}
       onChange={(e) => setInputMessage(e.target.value)}
       onKeyDown={handleKeyDown}
