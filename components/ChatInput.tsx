@@ -48,7 +48,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       rows={3}
     />
     <div className="absolute right-2 bottom-2 flex items-center space-x-2">
-      <AttachmentButton imageUrl={imageUrl} handleFileAttachment={handleFileAttachment} />
+      {/* <AttachmentButton imageUrl={imageUrl} handleFileAttachment={handleFileAttachment} /> */}
       <SendButton handleSendMessage={handleSendMessage} />
     </div>
   </div>
