@@ -26,11 +26,13 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { AttachmentIcon, CloseIcon, MenuIcon } from './Icons';
 import { Button } from "@/components/ui/button"
+import React from 'react';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   imageUrl?: string;
+  videoUrl?: string;
 }
 
 export function Chat() {
@@ -40,6 +42,7 @@ export function Chat() {
   const [inputMessage, setInputMessage] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [reminderMessage, setReminderMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -96,7 +99,7 @@ export function Chat() {
     setInputMessage('');
     setIsThinking(true);
 
-    console.log('Sending message with imageUrl:', imageUrl ? imageUrl.substring(0, 50) + '...' : 'undefined');
+    // console.log('Sending message with imageUrl:', imageUrl ? imageUrl.substring(0, 50) + '...' : 'undefined');
 
     try {
       const formData = new FormData();
@@ -189,6 +192,56 @@ export function Chat() {
     inputRef.current?.focus();
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setInputMessage(newValue);
+    
+    // check if the input contains a youtube video link
+    const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = newValue.match(youtubeRegex);
+    
+    if (match) {
+      const videoId = match[1];
+      setVideoUrl(`https://www.youtube.com/embed/${videoId}`);
+    } else {
+      setVideoUrl(null);
+    }
+  };
+
+  const renderMessage = (msg: Message, index: number) => {
+    const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = msg.content.match(youtubeRegex);
+    const videoId = match ? match[1] : null;
+
+    return (
+      <React.Fragment key={index}>
+        <ChatMessage
+          isAI={msg.role === 'assistant'}
+          avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
+          message={
+            <Markdown remarkPlugins={[remarkGfm]} className="line-break">
+              {formatContent(msg.content)}
+            </Markdown>
+          }
+          imageUrl={msg.imageUrl}
+        />
+        {videoId && (
+          <div className="mt-2 mb-4">
+            <iframe
+              width="100%"
+              height="315"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
+      </React.Fragment>
+    );
+  };
+
   return (
     <div className="flex min-h-screen w-full bg-gray-100">
       {/* Top bar for mobile devices */}
@@ -273,18 +326,8 @@ export function Chat() {
       <div className="flex-1 flex justify-center p-4 md:p-4 mt-14 md:mt-0">
         <div className="w-full max-w-[800px] flex flex-col bg-white border border-gray-400 rounded-lg overflow-hidden">
           <div className="flex-1 overflow-auto p-4 space-y-4">
-            {messages.map((msg, index) => (
-              <div key={index}>
-                <ChatMessage
-                  isAI={msg.role === 'assistant'}
-                  avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
-                  message={
-                    <Markdown remarkPlugins={[remarkGfm]} className="line-break">{formatContent(msg.content)}</Markdown>
-                  }
-                  imageUrl={msg.imageUrl}
-                />
-              </div>
-            ))}
+            {/* 消息列表 */}
+            {messages.map((msg, index) => renderMessage(msg, index))}
             {isThinking && (
               <ChatMessage
                 isAI={true}
@@ -294,6 +337,8 @@ export function Chat() {
             )}
             <div ref={messagesEndRef} />
           </div>
+          
+          {/* 輸入區域 */}
           <div className="border-t p-2">
             <ChatInput
               inputMessage={inputMessage}
@@ -306,15 +351,10 @@ export function Chat() {
               imageUrl={imageUrl}
               handleFileAttachment={handleFileAttachment}
               inputRef={inputRef}
-            />
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept="image/*"
-              style={{ display: 'none' }}
+              handleInputChange={handleInputChange}
             />
           </div>
+          
           {reminderMessage && (
             <div className="mt-2 text-sm text-red-500 px-2">
               {reminderMessage}
