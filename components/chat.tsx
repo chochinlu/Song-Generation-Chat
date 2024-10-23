@@ -271,6 +271,22 @@ export function Chat() {
           <div>
             <Button 
               variant="outline" 
+              onClick={handleButtonClick("Song name and artist, YouTube link: ")}
+            >
+              Song name and artist, YouTube link:
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={handleButtonClick("Get lyrics through API")}
+            >
+              Get lyrics through API
+            </Button> 
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
               onClick={handleButtonClick("I want to generate lyrics about XX")}
             >
               I want to generate lyrics about XX
