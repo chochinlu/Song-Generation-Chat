@@ -378,17 +378,17 @@ export function Chat() {
               Generate the Suno Songs
             </Button>
           </div>
-        <div>
-          <Button 
-            variant="outline" 
-            onClick={() => {
-              handleButtonClick("Check Suno credits");
-              inputRef.current?.focus();
-            }}
-          >
-            Check Suno credits
-          </Button>
-        </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Check Suno credits")(e);
+                inputRef.current?.focus();
+              }}
+            >
+             Check Suno credits
+            </Button>
+          </div>
         </div>
 
 
