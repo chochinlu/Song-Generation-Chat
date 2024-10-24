@@ -37,7 +37,7 @@ interface Message {
 
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Hello! How can I assist you today?' }
+    { role: 'assistant', content: 'Hello! What kind of song would you like to create today?' }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isThinking, setIsThinking] = useState(false);
