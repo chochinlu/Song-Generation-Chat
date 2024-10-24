@@ -271,67 +271,124 @@ export function Chat() {
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Song name and artist, YouTube link: ")}
+              onClick={(e) => {
+                handleButtonClick("Song name and artist, YouTube link: ")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Song name and artist, YouTube link:
+              Song name and artist, YouTube link: 
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Get lyrics through API")}
+              onClick={(e) => {
+                handleButtonClick("Get lyrics through API")(e);
+                inputRef.current?.focus();
+              }}
             >
               Get lyrics through API
-            </Button> 
-          </div>
-          <div>
-            <Button 
-              variant="outline" 
-              onClick={handleButtonClick("I want to generate lyrics about XX")}
-            >
-              I want to generate lyrics about XX
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Generate corresponding song style list")}
+              onClick={(e) => {
+                handleButtonClick("Analyze song style")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Generate corresponding song style list
+              Analyze song style
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Based on the song and my ideas, give me a Suno Style List")}
+              onClick={(e) => {
+                handleButtonClick("Analyze song instruments")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Based on the song and my ideas, give me a Suno Style List
+              Analyze song instruments
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Generate a song lyrics")}
+              onClick={(e) => {
+                handleButtonClick("Analyze song style and instruments")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Generate a song lyrics
+              Analyze song style and instruments
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Generate song using Suno API based on these lyrics")}
+              onClick={(e) => {
+                handleButtonClick("I want to create a song lyrics based on this song analyzed result, and my thought is: ")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Generate song using Suno API based on these lyrics
+              my thought is: 
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Current Suno Credit balance")}
+              onClick={(e) => {
+                handleButtonClick("Generate corresponding song style list")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Current Suno Credit balance
+              Generate song style list
             </Button>
           </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Generate a song title")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Generate a song title
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Give me the result of a song I want to generate, include: song title, song style, and lyrics")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Give me the result of a song
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Generate the Suno Songs")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Generate the Suno Songs
+            </Button>
+          </div>
+        <div>
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              handleButtonClick("Check Suno credits");
+              inputRef.current?.focus();
+            }}
+          >
+            Check Suno credits
+          </Button>
+        </div>
         </div>
 
 
