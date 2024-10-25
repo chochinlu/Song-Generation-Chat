@@ -263,11 +263,22 @@ export function Chat() {
 
       {/* Desktop sidebar */}
       <div className="hidden md:block w-100 bg-white border-r border-gray-300 p-6 flex-shrink-0">
-        <h1 className="text-xl font-bold text-gray-500">Suno Song Generator</h1>
-        <p className="text-sm text-gray-500">Generate your favorite songs through chat.</p>
+        <h1 className="text-xl font-bold text-gray-500 mb-2">Suno Song Generator</h1>
+        <p className="text-sm text-gray-500">Search and listen to your favorite songs,</p> 
+        <p className="text-sm text-gray-500">then generate new ones.</p>
 
-
-        <div className="space-y-4 mt-4">
+        <div className="space-y-4 mt-8">
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("What is ")(e);
+                inputRef.current?.focus();
+              }}
+            >
+             What is  
+            </Button>
+          </div>
           <div>
             <Button 
               variant="outline" 
@@ -283,33 +294,11 @@ export function Chat() {
             <Button 
               variant="outline" 
               onClick={(e) => {
-                handleButtonClick("Get lyrics through API")(e);
+                handleButtonClick("Get lyrics ")(e);
                 inputRef.current?.focus();
               }}
             >
-              Get lyrics through API
-            </Button>
-          </div>
-          <div>
-            <Button 
-              variant="outline" 
-              onClick={(e) => {
-                handleButtonClick("Analyze song style")(e);
-                inputRef.current?.focus();
-              }}
-            >
-              Analyze song style
-            </Button>
-          </div>
-          <div>
-            <Button 
-              variant="outline" 
-              onClick={(e) => {
-                handleButtonClick("Analyze song instruments")(e);
-                inputRef.current?.focus();
-              }}
-            >
-              Analyze song instruments
+              Get lyrics
             </Button>
           </div>
           <div>
@@ -360,6 +349,17 @@ export function Chat() {
             <Button 
               variant="outline" 
               onClick={(e) => {
+                handleButtonClick("Generate lyrics based on this song analyzed result and my thought")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Generate lyrics
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
                 handleButtonClick("Give me the result of a song I want to generate, include: song title, song style, and lyrics")(e);
                 inputRef.current?.focus();
               }}
@@ -389,10 +389,18 @@ export function Chat() {
              Check Suno credits
             </Button>
           </div>
+          <Button 
+            variant="outline" 
+            className="border-blue-500"
+            onClick={() => {
+              window.open("https://suno.com/me", "_blank", "noopener,noreferrer");
+            }}
+          >
+            Go to your Suno Library
+          </Button>
         </div>
-
-
-
+        
+        
       </div>
 
       {/* Main chat area */}
