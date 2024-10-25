@@ -26,20 +26,23 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { AttachmentIcon, CloseIcon, MenuIcon } from './Icons';
 import { Button } from "@/components/ui/button"
+import React from 'react';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   imageUrl?: string;
+  videoUrl?: string;
 }
 
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Hello! How can I assist you today?' }
+    { role: 'assistant', content: 'Hello! What kind of song would you like to create today?' }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [reminderMessage, setReminderMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -96,7 +99,7 @@ export function Chat() {
     setInputMessage('');
     setIsThinking(true);
 
-    console.log('Sending message with imageUrl:', imageUrl ? imageUrl.substring(0, 50) + '...' : 'undefined');
+    // console.log('Sending message with imageUrl:', imageUrl ? imageUrl.substring(0, 50) + '...' : 'undefined');
 
     try {
       const formData = new FormData();
@@ -189,6 +192,56 @@ export function Chat() {
     inputRef.current?.focus();
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setInputMessage(newValue);
+    
+    // check if the input contains a youtube video link
+    const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = newValue.match(youtubeRegex);
+    
+    if (match) {
+      const videoId = match[1];
+      setVideoUrl(`https://www.youtube.com/embed/${videoId}`);
+    } else {
+      setVideoUrl(null);
+    }
+  };
+
+  const renderMessage = (msg: Message, index: number) => {
+    const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = msg.content.match(youtubeRegex);
+    const videoId = match ? match[1] : null;
+
+    return (
+      <React.Fragment key={index}>
+        <ChatMessage
+          isAI={msg.role === 'assistant'}
+          avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
+          message={
+            <Markdown remarkPlugins={[remarkGfm]} className="line-break">
+              {formatContent(msg.content)}
+            </Markdown>
+          }
+          imageUrl={msg.imageUrl}
+        />
+        {videoId && (
+          <div className="mt-2 mb-4">
+            <iframe
+              width="100%"
+              height="315"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
+      </React.Fragment>
+    );
+  };
+
   return (
     <div className="flex min-h-screen w-full bg-gray-100">
       {/* Top bar for mobile devices */}
@@ -210,81 +263,164 @@ export function Chat() {
 
       {/* Desktop sidebar */}
       <div className="hidden md:block w-100 bg-white border-r border-gray-300 p-6 flex-shrink-0">
-        <h1 className="text-xl font-bold text-gray-500">Suno Song Generator</h1>
-        <p className="text-sm text-gray-500">Generate your favorite songs through chat.</p>
+        <h1 className="text-xl font-bold text-gray-500 mb-2">Suno Song Generator</h1>
+        <p className="text-sm text-gray-500">Search and listen to your favorite songs,</p> 
+        <p className="text-sm text-gray-500">then generate new ones.</p>
 
-
-        <div className="space-y-4 mt-4">
+        <div className="space-y-4 mt-8">
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("I want to generate lyrics about XX")}
+              onClick={(e) => {
+                handleButtonClick("What is ")(e);
+                inputRef.current?.focus();
+              }}
             >
-              I want to generate lyrics about XX
+             What is  
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Generate corresponding song style list")}
+              onClick={(e) => {
+                handleButtonClick("Use youtube api to get youtube links")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Generate corresponding song style list
+              Get youtube links
+            </Button>
+          </div>
+          
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Song name and artist, YouTube link: ")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Song name and artist, YouTube link: 
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Based on the song and my ideas, give me a Suno Style List")}
+              onClick={(e) => {
+                handleButtonClick("Use musixmatch api to get lyrics")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Based on the song and my ideas, give me a Suno Style List
+              Use api to get lyrics
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Generate a song lyrics")}
+              onClick={(e) => {
+                handleButtonClick("Analyze song style and instruments")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Generate a song lyrics
+              Analyze song style and instruments
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Generate song using Suno API based on these lyrics")}
+              onClick={(e) => {
+                handleButtonClick("I want to create a song lyrics based on this song analyzed result, and my thought is: ")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Generate song using Suno API based on these lyrics
+              my thought is: 
             </Button>
           </div>
           <div>
             <Button 
               variant="outline" 
-              onClick={handleButtonClick("Current Suno Credit balance")}
+              onClick={(e) => {
+                handleButtonClick("Generate corresponding song style list")(e);
+                inputRef.current?.focus();
+              }}
             >
-              Current Suno Credit balance
+              Generate song style list
             </Button>
           </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Generate a song title")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Generate a song title
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Generate lyrics based on this song analyzed result and my thought")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Generate lyrics
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Give me the result of a song I want to generate, include: song title, song style, and lyrics")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Give me the result of a song
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Generate the Suno Songs")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Generate the Suno Songs
+            </Button>
+          </div>
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
+                handleButtonClick("Check Suno credits")(e);
+                inputRef.current?.focus();
+              }}
+            >
+             Check Suno credits
+            </Button>
+          </div>
+          <Button 
+            variant="outline" 
+            className="border-blue-500"
+            onClick={() => {
+              window.open("https://suno.com/me", "_blank", "noopener,noreferrer");
+            }}
+          >
+            Go to your Suno Library
+          </Button>
         </div>
-
-
-
+        
+        
       </div>
 
       {/* Main chat area */}
       <div className="flex-1 flex justify-center p-4 md:p-4 mt-14 md:mt-0">
         <div className="w-full max-w-[800px] flex flex-col bg-white border border-gray-400 rounded-lg overflow-hidden">
           <div className="flex-1 overflow-auto p-4 space-y-4">
-            {messages.map((msg, index) => (
-              <div key={index}>
-                <ChatMessage
-                  isAI={msg.role === 'assistant'}
-                  avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
-                  message={
-                    <Markdown remarkPlugins={[remarkGfm]} className="line-break">{formatContent(msg.content)}</Markdown>
-                  }
-                  imageUrl={msg.imageUrl}
-                />
-              </div>
-            ))}
+            {/* 消息列表 */}
+            {messages.map((msg, index) => renderMessage(msg, index))}
             {isThinking && (
               <ChatMessage
                 isAI={true}
@@ -294,6 +430,8 @@ export function Chat() {
             )}
             <div ref={messagesEndRef} />
           </div>
+          
+          {/* 輸入區域 */}
           <div className="border-t p-2">
             <ChatInput
               inputMessage={inputMessage}
@@ -306,15 +444,10 @@ export function Chat() {
               imageUrl={imageUrl}
               handleFileAttachment={handleFileAttachment}
               inputRef={inputRef}
-            />
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept="image/*"
-              style={{ display: 'none' }}
+              handleInputChange={handleInputChange}
             />
           </div>
+          
           {reminderMessage && (
             <div className="mt-2 text-sm text-red-500 px-2">
               {reminderMessage}
