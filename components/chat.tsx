@@ -283,6 +283,18 @@ export function Chat() {
             <Button 
               variant="outline" 
               onClick={(e) => {
+                handleButtonClick("Use youtube api to get youtube links")(e);
+                inputRef.current?.focus();
+              }}
+            >
+              Get youtube links
+            </Button>
+          </div>
+          
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={(e) => {
                 handleButtonClick("Song name and artist, YouTube link: ")(e);
                 inputRef.current?.focus();
               }}
@@ -294,11 +306,11 @@ export function Chat() {
             <Button 
               variant="outline" 
               onClick={(e) => {
-                handleButtonClick("Get lyrics ")(e);
+                handleButtonClick("Use musixmatch api to get lyrics")(e);
                 inputRef.current?.focus();
               }}
             >
-              Get lyrics
+              Use api to get lyrics
             </Button>
           </div>
           <div>
